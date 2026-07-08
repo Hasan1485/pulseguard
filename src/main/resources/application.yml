@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: pulseguard
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:pulseguard}
+    password: ${RABBITMQ_PASS:pulseguard}
+    listener:
+      simple:
+        prefetch: 64
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+pulseguard:
+  model-path: ${MODEL_PATH:model/fraud_xgb.onnx}
+  stream-path: ${STREAM_PATH:data/stream.csv.gz}
+  fraud-threshold: 0.5
+  simulator:
+    autostart: ${SIMULATOR_AUTOSTART:true}
+    tps: ${SIMULATOR_TPS:50}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    dev.hishaam.pulseguard: INFO

@@ -1,0 +1,15 @@
+target/
+*.class
+.idea/
+*.iml
+.vscode/
+.DS_Store
+training/.venv/
+__pycache__/
+data/
+model/
+.claude/
+.classpath
+.project
+.settings/
+.factorypath
