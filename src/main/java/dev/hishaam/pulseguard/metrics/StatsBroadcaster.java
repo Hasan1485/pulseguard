@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class StatsBroadcaster {
 
-    private final PipelineMetrics metrics;
-    private final SimpMessagingTemplate broker;
+  private final PipelineMetrics metrics;
+  private final SimpMessagingTemplate broker;
 
-    public StatsBroadcaster(PipelineMetrics metrics, SimpMessagingTemplate broker) {
-        this.metrics = metrics;
-        this.broker = broker;
-    }
+  public StatsBroadcaster(PipelineMetrics metrics, SimpMessagingTemplate broker) {
+    this.metrics = metrics;
+    this.broker = broker;
+  }
 
-    @Scheduled(fixedRate = 1000)
-    public void broadcastStats() {
-        broker.convertAndSend("/topic/stats", (Object) metrics.snapshot());
-    }
+  @Scheduled(fixedRate = 1000)
+  public void broadcastStats() {
+    broker.convertAndSend("/topic/stats", (Object) metrics.snapshot());
+  }
 }

@@ -1,0 +1,24 @@
+[project]
+name = "pulseguard-training"
+version = "1.0.0"
+description = "PulseGuard model training: XGBoost fraud classifier with SMOTE, exported to ONNX"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas",
+    "scikit-learn",
+    "xgboost",
+    "imbalanced-learn",
+    "onnxmltools",
+    "onnxruntime",
+    "skl2onnx",
+]
+
+[dependency-groups]
+dev = ["ruff", "ty"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]

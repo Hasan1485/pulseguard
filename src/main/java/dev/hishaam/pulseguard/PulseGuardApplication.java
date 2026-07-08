@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ConfigurationPropertiesScan
 public class PulseGuardApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(PulseGuardApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(PulseGuardApplication.class, args);
+  }
 }

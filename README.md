@@ -87,15 +87,13 @@ src/test/             Testcontainers full-pipeline integration test
 
 ## Running it
 
-Requires: Java 25, Maven, Docker, Python 3.11+ (training only).
+Requires: Java 25, Maven, Docker, [uv](https://docs.astral.sh/uv/) (training only).
 
 **1. Train the model** (downloads the dataset from OpenML on first run,
 writes `model/fraud_xgb.onnx` and `data/stream.csv.gz`, ~2 min):
 
 ```bash
-python3 -m venv training/.venv
-training/.venv/bin/pip install -r training/requirements.txt
-training/.venv/bin/python training/train.py
+cd training && uv sync && uv run python train.py && cd ..
 ```
 
 **2. Start the infrastructure:**
@@ -119,6 +117,15 @@ and watch latency percentiles hold single-digit milliseconds.
 ```bash
 mvn test
 ```
+
+## Code style
+
+- Java is formatted with [Spotless](https://github.com/diffplug/spotless)
+  (google-java-format); `mvn spotless:check` runs as part of the build,
+  `mvn spotless:apply` fixes.
+- Python is linted and formatted with [ruff](https://docs.astral.sh/ruff/) and
+  type-checked with [ty](https://github.com/astral-sh/ty):
+  `cd training && uv run ruff format . && uv run ruff check . && uv run ty check .`
 
 ## API
 

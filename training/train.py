@@ -12,6 +12,7 @@ with SMOTE, trains an XGBoost classifier, and exports:
 
 Run:  python training/train.py
 """
+
 import gzip
 import json
 import time
@@ -75,7 +76,12 @@ def rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     f_ratio = np.zeros(n, dtype=np.float32)
 
     for i, (card, ts, amount) in enumerate(
-        zip(df["card_id"].to_numpy(), df["Time"].to_numpy(), df["Amount"].to_numpy())
+        zip(
+            df["card_id"].to_numpy(),
+            df["Time"].to_numpy(),
+            df["Amount"].to_numpy(),
+            strict=True,
+        )
     ):
         dq = times.setdefault(card, deque())
         while dq and ts - dq[0] > WINDOW_SEC:
@@ -100,8 +106,12 @@ def rolling_features(df: pd.DataFrame) -> pd.DataFrame:
 
 def train(df: pd.DataFrame):
     from imblearn.over_sampling import SMOTE
-    from sklearn.metrics import (average_precision_score, precision_score,
-                                 recall_score, roc_auc_score)
+    from sklearn.metrics import (
+        average_precision_score,
+        precision_score,
+        recall_score,
+        roc_auc_score,
+    )
     from sklearn.model_selection import train_test_split
     from xgboost import XGBClassifier
 
@@ -117,9 +127,15 @@ def train(df: pd.DataFrame):
     print(f"{len(y_bal):,} rows balanced")
 
     model = XGBClassifier(
-        n_estimators=400, max_depth=6, learning_rate=0.1,
-        subsample=0.9, colsample_bytree=0.9, tree_method="hist",
-        eval_metric="auc", n_jobs=-1, random_state=SEED,
+        n_estimators=400,
+        max_depth=6,
+        learning_rate=0.1,
+        subsample=0.9,
+        colsample_bytree=0.9,
+        tree_method="hist",
+        eval_metric="auc",
+        n_jobs=-1,
+        random_state=SEED,
     )
     print("Training XGBoost...")
     t0 = time.time()
@@ -150,7 +166,8 @@ def export_onnx(model, X_sample: np.ndarray, proba_ref: np.ndarray) -> Path:
 
     n_features = X_sample.shape[1]
     onx = convert_xgboost(
-        model, initial_types=[("input", FloatTensorType([None, n_features]))],
+        model,
+        initial_types=[("input", FloatTensorType([None, n_features]))],
         target_opset=15,
     )
     # Strip ZipMap (if present) so the probabilities output is a plain float
@@ -183,8 +200,10 @@ def export_onnx(model, X_sample: np.ndarray, proba_ref: np.ndarray) -> Path:
     max_diff = float(np.max(np.abs(onnx_proba - proba_ref[:2048])))
     print(f"ONNX parity check: max |diff| = {max_diff:.6f}")
     assert max_diff < 1e-3, "ONNX output diverges from XGBoost"
-    print(f"Wrote {path} ({path.stat().st_size / 1024:.0f} KB), "
-          f"outputs: {[o.name for o in sess.get_outputs()]}")
+    print(
+        f"Wrote {path} ({path.stat().st_size / 1024:.0f} KB), "
+        f"outputs: {[o.name for o in sess.get_outputs()]}"
+    )
     return path
 
 

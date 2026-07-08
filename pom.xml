@@ -85,6 +85,27 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <java>
+            <!-- Drops unused single-type imports only; import pkg.* lines are never removed. -->
+            <removeUnusedImports>
+              <engine>cleanthat-javaparser-unnecessaryimport</engine>
+            </removeUnusedImports>
+            <googleJavaFormat/>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
